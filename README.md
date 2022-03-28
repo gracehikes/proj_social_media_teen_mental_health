@@ -13,7 +13,9 @@ There’s a youth self-completed questionnaire sub-section from the main “Unde
 
 The latest available questionnaire responses were released in 2019. This captured responses to almost 200 questions from 1,800 young people in the U.K. I’ve selected the following questions from this 2019 youth data set as the basis of my analysis:
 
-<img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%207%20emoticons.png" width=120% height=120%>
+<p align="center">
+  <img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%207%20emoticons.png" width=110% height=110%>
+</p>
 
 The regression model is shown below. Y_i is the mental well-being response score, α denotes how the expected well-being response score changes when spending either 1-3 hours, or 4+ hours on social media per school day when compared to the control group who engages on social media for less and an hour each school day. I’ve also included the child’s age, child’s gender, and parents’ educational qualifications in the regression model as observed confounding controls.
 
@@ -25,6 +27,8 @@ The regression model is shown below. Y_i is the mental well-being response score
 # Results
 The table below summarizes the measured effects of social media daily use on the young people's survey responses. When we reviewed the responses from “power users” of social media i.e. the young people who spent 4 or more hours per normal school day on social media (treatment group B), the estimated effects on well-being scores were all movement toward the more unhappy end of the 1-7 emoticon scale. Compared to the median-level users, the effects on well-being scores for the power users were magnified. Three out of the six indicators of mental well-being exhibited statistical significant treatment effects: feelings about school work (+0.37, p=0.02), school they went to (+0.69, p<0.00001), and life as a whole (+0.49, p=0.0004). 
 
-<img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%20effect%20results%20table.png" width=75% height=75%>
+<p align="center">
+  <img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%20effect%20results%20table.png" width=75% height=75%>
+</p>
 
 
