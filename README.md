@@ -15,6 +15,6 @@ What measurable effects are there on young people’s mental health when they ha
 # Results
 Below are a few highlights from the pivot tables. 
 
-![alt text](https://github.com/PlayingNumbers/ds_salary_proj/blob/master/salary_by_job_title.PNG "Salary by Position")
+![Survey Questions](https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%207%20emoticons.png "Survey Questions")
 ![alt text](https://github.com/PlayingNumbers/ds_salary_proj/blob/master/positions_by_state.png "Job Opportunities by State")
 ![alt text](https://github.com/PlayingNumbers/ds_salary_proj/blob/master/correlation_visual.png "Correlations")
