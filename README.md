@@ -7,21 +7,22 @@ What measurable effects are there on young people’s mental health when they ha
 
 
 # Methodology
-* I’ve analyzed select questions and responses from an observational data set in the United Kingdom called “Understanding Society”. It’s the largest longitudinal study of its kind, surveying nearly 20,000 U.K. households in the latest survey year 2019 and provides important information for researchers and policymakers on the changes and stability of people’s lives in the U.K. These surveys were initiated in 1991 and have been conducted annually since.
-* There’s a youth self-completed questionnaire sub-section from the main “Understanding Society” data set, for which kids aged 10 to 15 years old from some of the 20,000 households in the study were asked to respond. It included questions on the child’s time spent on social media, computer- and other screen-time (game consoles, computer games, TV), family support, feelings about different areas of life, health behavior like smoking and drinking, aspirations about their future, etc.
-* The latest available questionnaire responses were released in 2019. This captured responses to almost 200 questions from 1,800 young people in the U.K. I’ve selected the following questions from this 2019 youth data set as the basis of my analysis:
+I’ve analyzed select questions and responses from an observational data set in the United Kingdom called “Understanding Society”. It’s the largest longitudinal study of its kind, surveying nearly 20,000 U.K. households in the latest survey year 2019 and provides important information for researchers and policymakers on the changes and stability of people’s lives in the U.K. These surveys were initiated in 1991 and have been conducted annually since.
+
+There’s a youth self-completed questionnaire sub-section from the main “Understanding Society” data set, for which kids aged 10 to 15 years old from some of the 20,000 households in the study were asked to respond. It included questions on the child’s time spent on social media, computer- and other screen-time (game consoles, computer games, TV), family support, feelings about different areas of life, health behavior like smoking and drinking, aspirations about their future, etc.
+
+The latest available questionnaire responses were released in 2019. This captured responses to almost 200 questions from 1,800 young people in the U.K. I’ve selected the following questions from this 2019 youth data set as the basis of my analysis:
 
 <img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%207%20emoticons.png" width=120% height=120%>
 
-* The regression model is shown below. $Y_i$ is the mental well-being response score, α denotes how the expected well-being response score changes when spending either 1-3 hours, or 4+ hours on social media per school day when compared to the cotnrol group who engages on social media for less and an hour each school day. I’ve also included the child’s age, child’s gender, and parents’ educational qualifications in the regression model as observed confounding controls.
+The regression model is shown below. $Y_i$ is the mental well-being response score, α denotes how the expected well-being response score changes when spending either 1-3 hours, or 4+ hours on social media per school day when compared to the cotnrol group who engages on social media for less and an hour each school day. I’ve also included the child’s age, child’s gender, and parents’ educational qualifications in the regression model as observed confounding controls.
 
-<img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%20regression%20formula.png" width=120% height=120%>
+<img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%20regression%20formula.png" width=80% height=80%>
 
 
 # Results
 The table below summarizes the measured effects of social media daily use on the young people's survey responses. When we reviewed the responses from “power users” of social media i.e. the young people who spent 4 or more hours per normal school day on social media (treatment group B), the estimated effects on well-being scores were all movement toward the more unhappy end of the 1-7 emoticon scale. Compared to the median-level users, the effects on well-being scores for the power users were magnified. Three out of the six indicators of mental well-being exhibited statistical significant treatment effects: feelings about school work (+0.37, p=0.02), school they went to (+0.69, p<0.00001), and life as a whole (+0.49, p=0.0004). 
 
-![](https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%20effect%20results%20table.png "Results Table")
+<img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%20effect%20results%20table.png" width=80% height=80%>
 
-<img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%20effect%20results%20table.png" width="150" />
 
