@@ -25,7 +25,9 @@ The regression model is shown below. Y_i is the mental well-being response score
 
 
 # Results
-The table below summarizes the measured effects of social media daily use on the young people's survey responses. When we reviewed the responses from “power users” of social media i.e. the young people who spent 4 or more hours per normal school day on social media (treatment group B), the estimated effects on well-being scores were all movement toward the more unhappy end of the 1-7 emoticon scale. Compared to the median-level users, the effects on well-being scores for the power users were magnified. Three out of the six indicators of mental well-being exhibited statistical significant treatment effects: feelings about school work (+0.37, p=0.02), school they went to (+0.69, p<0.00001), and life as a whole (+0.49, p=0.0004). 
+The table below summarizes the measured effects of social media daily use on the young people's survey responses. Among the young people who reported spending 1-3 hours on a normal school day chatting with their friends on social media i.e. treatment group A, the effects on how they felt on the 6 indicators were very small (ranging from -0.09 change in score when asked about their friends, to +0.20 for appearance) and generally not statistically significant.
+
+When we reviewed the responses from “power users” of social media i.e. the young people who spent 4 or more hours per normal school day on social media (treatment group B), the estimated effects on well-being scores were all movement toward the more unhappy end of the 1-7 emoticon scale. Three out of the six indicators of mental well-being exhibited statistical significant treatment effects: feelings about school work (+0.37, p=0.02), school they went to (+0.69, p<0.00001), and life as a whole (+0.49, p=0.0004). 
 
 <p align="center">
   <img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%20effect%20results%20table.png" width=75% height=75%>
