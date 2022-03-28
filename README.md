@@ -15,7 +15,7 @@ The latest available questionnaire responses were released in 2019. This capture
 
 <img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%207%20emoticons.png" width=120% height=120%>
 
-The regression model is shown below. $Y_i$ is the mental well-being response score, α denotes how the expected well-being response score changes when spending either 1-3 hours, or 4+ hours on social media per school day when compared to the cotnrol group who engages on social media for less and an hour each school day. I’ve also included the child’s age, child’s gender, and parents’ educational qualifications in the regression model as observed confounding controls.
+The regression model is shown below. Y~i~ is the mental well-being response score, α denotes how the expected well-being response score changes when spending either 1-3 hours, or 4+ hours on social media per school day when compared to the cotnrol group who engages on social media for less and an hour each school day. I’ve also included the child’s age, child’s gender, and parents’ educational qualifications in the regression model as observed confounding controls.
 
 <img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%20regression%20formula.png" width=60% height=60%>
 
