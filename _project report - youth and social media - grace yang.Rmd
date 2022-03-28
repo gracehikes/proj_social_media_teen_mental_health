@@ -1,0 +1,207 @@
+---
+title: "UCLA STATS 420 - Social Media Use and Youth Mental Health"
+author: "Project Report - December 2020 - Grace Yang"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+
+\section*{Abstract}
+
+\
+The suicide rate for young people aged 10–14 nearly tripled from 2007 to 2017, according to new data from the CDC. ^[ https://www.cdc.gov/nchs/data/databriefs/db352-h.pdf ] Researchers have also found in recent studies that teenagers (aged 13 to 18) ^[ https://journals.sagepub.com/doi/full/10.1177/2167702617723376 ] and young adults (aged 19 to 32) ^[ https://pubmed.ncbi.nlm.nih.gov/26783723/ ] who spent the most time on Instagram, Facebook, and other social media platforms were shown to have significantly higher rates of reported depression than those who spent the least.
+
+Is this more than correlation? There's strong support that time spent on social media has causal effects on children's mental well-being. According to the Child Mind Institute, a non-profit that works to improve the lives of children struggling with mental health and learning disorders: “...Smartphones were introduced in 2007, and by 2015 fully 92 percent of teens and young adults owned a smartphone. The rise in depressive symptoms correlates with smartphone adoption during that period, even when matched year by year...” ^[ https://childmind.org/article/is-social-media-use-causing-depression/ ] 
+
+What measurable effects are there on young people's mental health when they had higher than average frequency of social media use? Are these effects large and statistically solid? How robust are these effects in the face of unobserved confounding? I've explored this research question and found that yes, there were measurable and negative implications on young people's mental well-being when the amount of time spent on social media crossed a critical threshold. The largest effects were measured in children who reported spending 4 or more hours on a normal school day chatting or interacting with friends on social media apps.
+
+
+\section*{Methodology}
+
+I've analyzed select questions and responses from an observational data set in the United Kingdom called "Understanding Society". It's the largest longitudinal study of its kind, surveying nearly 20,000 U.K. households in the latest survey year 2019 and provides important information for researchers and policymakers on the changes and stability of people's lives in the U.K. These surveys were initiated in 1991 and have been conducted annually since.
+
+There's a youth self-completed questionnaire sub-section from the main "Understanding Society" data set, for which kids aged 10 to 15 years old from some of the 20,000 households in the study were asked to respond. It included questions on the child's time spent on social media, computer- and other screen-time (game consoles, computer games, TV), family support, feelings about different areas of life, health behavior like smoking and drinking, aspirations about their future, etc.
+
+The latest available questionnaire responses were released in 2019. This captured responses to almost 200 questions from 1,800 young people in the U.K. I've selected the data to seven questions from this 2019 youth data set as the basis of my analysis.
+
+\newpage
+For the TREATMENT, I've chosen to look at the young people's different responses to this question: “How many hours do you spend chatting or interacting with friends through a social media website or app on a normal school day?”. I've grouped the five categorical responses of time spent on social media into one control group and two treatment groups as follow:
+
+- I've defined the control group as the young people who responded with "None" or "Less than an hour". The control group makes up around 47% of the data set.
+
+- Treatment Group A: "1-3 hours" i.e. these are the "medium-high" frequency users (~37%)
+
+- Treatment Group B: "4-6 hours" or "7 or more hours" i.e. these are the "high-high" frequency users (~15%) \
+
+For the OUTCOME, I've explored 6 different responses which may indicate the young person's state of mental well-being:
+
+- How do you feel about your school work?
+
+- How do you feel about your appearance?
+
+- How do you feel about your family?
+
+- How do you feel about your friends?
+
+- How do you feel about the school you go to?
+
+- Which best describes how you feel about your life as a whole? \
+
+The response section for each of the six questions showed a panel of different emoticon faces, where ‘1’ is completely happy with big smile and changing progressively to ‘7’ which is not at all happy with big frown. The relevant page from the U.K. study's sample youth questionnaire is shown below: \
+
+![Possible indicators of a young person's mental well-being](/Users/graceyang/Google Drive/_UCLA 420 causal/420 HW/project report 7 emoticons.png){width=90%}
+\newpage
+I've used the Selection On Observables (SOO) approach to answer the research question. The frequency of web use and mental health status may be related to age, gender, and socio-economic status. Social media use and time spent tend to increase with as a child gets older. It's also more likely for girls to spend more time chatting with their social circle online than do boys. Lastly, families in higher socio-economic statuses have the financial resources to send their kids to enrichment classes in sports, arts, and/or tuition. This leaves less time for young people in these families to spend many hours interacting with friends via social media apps.
+
+I had assumed that for children of the same age, gender, and similar family socio-economic status, the number of hours spent chatting and interacting on social media is random. I used matching techniques for these observable covariates as much as possible before measuring the 6 mental well-being indicator scores. Any differences in the 6 responses are assumed to be effects from spending more hours on social media.
+
+Additionally, I also "stress-tested" the effects found using sensitivity analysis. This allowed some exploration of violations of SOO for any unobserved, unnamed confounding factors which may exist other than age, gender, and family socio-economic status.
+
+The general form of the  regression model is shown below:
+
+$$
+\begin{aligned}
+Y_i = \beta_0 & +  \alpha(\mbox{Time spent on social media}_i) + \beta_1(\mbox{Child's age}_i)  + \beta_2(\mbox{Child's gender}_i)  \\
+&  + \beta_3(\mbox{Parents' years of education}_i) + \epsilon_i \\
+\end{aligned}
+$$
+
+where $Y_i$ is the mental well-being response score, $\alpha$ denotes how the expected well-being response score changes when spending either 1-3 hours, or 4+ hours on social media per school day when compared to the cotnrol group who engages on social media for less and an hour each school day. I've also included the child's age, child's gender, and parents' educational qualifications^[ Parents' years of education completed (higher of either) was used as a proxy for the household's socio-economic level] in the regression model as observed confounding controls.
+
+
+\section*{Results}
+
+Looking at Table 1 below, the average well-being score on the 1-7 scale for the control group ranges from a relatively happy 1.52 when asked about their family, to 2.61 when asked about their appearance. Also noteworthy is that school-related feelings are between 2.4 to 2.5, which is almost +1 unit away from the direction of the 1.52 happy feeling score when asked about their family. School work and school in general appeared to generate slightly more unhappy feelings compared to family and friends for the control group.
+
+```{r echo=FALSE}
+table1 <- matrix(c(2.49, 0.12, 0.09, 1.42, 0.37, 0.15, 2.43,
+                   2.61, 0.20, 0.09, 2.29, 0.27, 0.15, 1.79,
+                   1.52, 0.07, 0.07, 0.98, 0.27, 0.15, 1.86,
+                   1.82, -0.09, 0.08, -1.07, 0.19, 0.12, 1.65,
+                   2.44, 0.09, 0.09, 1.02, 0.69, 0.14, 5.04,
+                   2.13, 0.16, 0.08, 2.01, 0.49, 0.14, 3.51),
+                 ncol = 7, byrow = TRUE)
+
+colnames(table1) <- c("Mean score", "Est.", "SE", "t-stat", "Est.", "SE", "t-stat")
+
+rownames(table1) <-
+  c(
+    "How do you feel about your school work?",
+    "How do you feel about your appearance?",
+    "How do you feel about your family?",
+    "How do you feel about your friends?",
+    "How do you feel about the school you go to?",
+    "How do you feel about your life as a whole?"
+  )
+
+library(kableExtra)
+kbl(
+  table1,
+  booktabs = T,
+  digits = 2,
+  align = "r",
+  caption = "Estimated average effect on treated group after matching"
+) %>%
+  kable_classic() %>%
+  add_header_above(c(" " = 1, "0-1 hour" = 1, "1-3 hours" = 3, "4+ hours" = 3)) %>%
+  add_header_above(c(" ", "CONTROL" = 1, "TREATMENT" = 6)) %>%
+  kable_styling(full_width = FALSE, latex_options = c("hold_position")) %>%
+  footnote(
+    number = c("Est. = Estimated average increase / (decrease) in score for treated group, SE = standard error",
+               "n=833 for control group spending less than 1 hour per school day on social media",
+               "n=649 for treatment group A spending 1-3 hours per school day on social media",
+               "n=293 for treatment group B spending 4+ hours per school day on social media"
+    ),
+  )
+```
+
+
+
+\newpage
+A few observations about estimated treatment effects on the treated after matching (Table 1):
+
+- Among the young people who reported spending 1-3 hours on a normal school day chatting with their friends on social media i.e. treatment group A, the effects on how they felt on the 6 indicators were very small (ranging from -0.09 change in score when asked about their friends, to +0.20 for appearance) and generally not statistically significant. The only two significant treatment effects were regarding their feelings about their own appearance and about life as a whole. For appearance, the estimated effect of spending 1-3 hours on social media per school day was +0.20 (p=0.02) which indicates a shift toward the more unhappy end of the 1-7 scale. The average movement was +0.16 (p=0.04) when asked how they felt about their life as a whole. But generally, there doesn't appear to be large ill-effects on youth mental well-being when they've spent median amounts of time on social media during school hours.
+
+- When we reviewed the responses from "power users" of social media i.e. the young people who spent 4 or more hours per normal school day on social media (treatment group B), the estimated effects on well-being scores were all movement toward the more unhappy end of the 1-7 emoticon scale. Compared to the median-level users, the effects on well-being scores for the power users were magnified. Three out of the six indicators of mental well-being exhibited statistical significant treatment effects: feelings about school work (+0.37, p=0.02), school they went to (+0.69, p<0.00001), and life as a whole (+0.49, p=0.0004). The response score difference for a fourth area about their family also came very close to the 5% significance level hurdle: +0.27 units toward the unhappy end of the 1-7 scale (p=0.06).
+
+
+\section*{Robustness of estimated treatment effects}
+
+The estimated treatment effects for the young people who spent 4 or more hours on social media are of larger magnitude than those who spent the median 1-3 hours; the super users' average well-being score differences for four out of the six questions also had strong statistical support. Let's investigate into just how robust are the estimates for this super user treatment group for unobserved confounding.
+
+```{r echo=FALSE}
+table2 <- matrix(c(0.46, 0.13, 3.60, 1.14, 10.20, 4.80, 1121,
+                   0.32, 0.12, 2.58, 0.59, 7.40, 1.80, 1121,
+                   0.22, 0.10, 2.15, 0.41, 6.20, 0.60, 1121,
+                   0.08, 0.09, 0.89, 0.07, 2.60, 0.00, 1121,
+                   0.71, 0.12, 6.07, 3.19, 16.60, 11.50, 1121,
+                   0.50, 0.11, 4.44, 1.73, 12.40, 7.10, 1121),
+                 ncol = 7, byrow = TRUE)
+
+colnames(table2) <- c("Est.", "SE", "t-stat", "%R2YDX", "%RV", "%RValpha", "df")
+
+rownames(table2) <-
+  c(
+    "How do you feel about your school work?",
+    "How do you feel about your appearance?",
+    "How do you feel about your family?",
+    "How do you feel about your friends?",
+    "How do you feel about the school you go to?",
+    "How do you feel about your life as a whole?"
+  )
+
+library(kableExtra)
+kbl(table2,
+    booktabs = T,
+    digits = 2, 
+    align = "r",
+    caption = "Robustness of estimated average effect on super users") %>%
+  kable_styling(full_width = FALSE, latex_options = "hold_position")%>%
+  footnote(
+    number = c("Super users are the treatment group spending 4+ hours per school day on social media", 
+               "%RValpha at 0.05 significance level"),
+  )
+
+```
+
+
+Table 2 summarizes some robustness measurements of the estimated treatment effects from the most hours spent on social media. For such power users among the young people in the U.K. study:
+
+- The estimated effect of so many hours spent on how a young person felt about their school is toward being more unhappy and are statistically significant: there is +0.71 average difference in well-being response scores (p<0.00001) for these power users. This is also the strongest treatment effect out of the 6 different questions regarding mental well-being.
+
+- The +0.71 estimate is after controlling for confounding factors like the child's age, gender, and parents' educational level (highest attained) via the regression model. When young people spent so much time each school day on social media interactions, it very likely ate into the hours needed for homework, going out to meet with friends in-person, family activities, sports, and/or other extra-curricular activities. Screen-based time spent is much less enriching for a young person's mental well-being compared to all the other ways of spending after-school time. 
+
+- How defensible is the +0.71 estimated movement for unobserved confounding? The value of %R2YDX can represent an “extreme scenario” analysis: if an unobserved confounder explained 100% of the remaining outcome variation, such a confounder would need to explain at least 3.19% of the residual variation in the social media time spent treatment in order to reduce the +0.71 estimated effect to zero. The hurdle appears easy to overcome.
+
+- The Robustness Value (%RV) for negating the estimated power user effect is 16.6% i.e. unobserved confounding that can explain 16.6% of residual variance of the treatment and outcome will be strong enough to erase all the observed effect. The +0.71 estimate will be as a result of bias from unobserved confounders, and not from treatment effect of high social media use.
+
+- What if we wanted to test the null hypothesis that there is actually zero effect from being a social media power user? The robustness value (%RValpha=0.05) for testing this null hypothesis now drops from 16.6% to 11.5%. Unobserved confounders will need to explain 11.5% of the residual variance (both of the treatment and of the outcome) to negate the +0.71 estimated effect to the boundary of statistical significance at $\alpha$ = 0.05 level.
+
+- The 16.6% Robustness Value is on the bubble in terms of whether unobserved confounders may explain away the average treatment effect of +0.71. This is in comparison to the really high 68% RV for treatment effect of pro-peace president Santos' 2014 vote share, clearly indicating that confounders must be large to negate its effect on Colombia's 2015 vote for peace deal. ^[ Who supports peace with the FARC?
+A sensitivity-based approach under imperfect identification. A published paper by Chad Hazlett and Francesca Parente. https://www.researchgate.net/publication/330008672_Who_supports_peace_with_the_FARC_A_sensitivity-based_approach_under_imperfect_identification ]. It's not a clear-cut conclusion with RV of 16.6%, though calculating these robustness numbers allows concrete benchmarks with which to consider likelihood of significant unobserved confounding. \
+
+
+
+![Sensitivity contour plots of point estimates: gender as benchmark](/Users/graceyang/Google Drive/_UCLA 420 causal/420 HW/project report contour plot gender.png){width=60%}
+
+Figure 1 above shows the contour plot and unobserved confounding at different strengths of observed covariate, gender. The contour plot shows that the effect is robust to confounding three times as strong as the observed covariate of being a girl. Gender of the young person does not appear to be a strong covariate in terms of treatment effect; the magnitude of the effect did not decrease by much as we increased the strength from 1x to 2x to 3x gender. \
+
+
+\newpage
+
+![Sensitivity contour plots of point estimates: age as benchmark](/Users/graceyang/Google Drive/_UCLA 420 causal/420 HW/project report contour plot age.png){width=60%}
+
+Let's consider the age as benchmark for unobserved confounding instead. Figure 2 above shows the contour plot and unobserved confounding at three different strengths of observed covariate, age:
+
+- The plot shows that the treatment effect is robust to confounding at 1x and 2x as strong as the observed covariate of the age of the young person. However, the effects get progressively smaller and closer toward the red dotted line of zero effect. At 3x the strength of observed covariate age, the treatment effect of +0.71 becomes completely negated and then some: it is now -0.055 after adjusting for confounding of 3x strength of age and opposite direction compared to the unadjusted estimate of +0.71.
+
+- The point marked “3x age” shows us what the adjusted estimated treatment effect would be IF there was confounding of this strength present. It's a very conservative bound on the worst confounding that can exist i.e. if we were to assume that unobserved confounding is “no more than three times worse” than age. This would erase the estimated treatment effect, bringing it from +0.71 unit change to -0.055. 
+
+- Could such unobserved confounding of "3x age" strength exist? It's certainly possible. For the young people in this age group, the major source of unhappiness seem related to school (school work, school in general). Possible unobserved confounding can also take the form of natural scholastic inclinations (or lack there of). Is it possible to obtain each child's school grades when they were 8 or 9 years old i.e. before they're getting cellphones and/or access to unsupervised computer time after-school? How much of the residual variance will this additional pre-treatment and potential confounding explain away? It's plausible that this confounding reaches the level of "3x age".
+
+
+\section*{Conclusions}
+
+There appeared to be adverse effects on a young person's mental well-being when they spent in excess of 4 hours on social media chatting and interactions during a normal school day. The analysis of responses for six mental well-being questions from the U.K. 2019 data, when compared for different amounts of time that the young people spent on social media, produced such indications. While the effect estimates varied in magnitude, they were all directionally toward the more unhappy end of the scale for the six questions. In terms of strength against potential unobserved confounding, these effect estimates were not the most robust. We're not able to conclude causal effect with high confidence.
