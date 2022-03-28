@@ -1,0 +1,505 @@
+---
+output:
+  pdf_document: default
+---
+
+==========================================
+\section*{ANALYSIS CODE IN R}
+==========================================
+
+\section*{EXPLORATORY DATA ANALYSIS}
+
+```{r}
+# load data
+library(haven)
+df1_raw <- read_dta('/Users/graceyang/Google Drive/_UCLA 420 causal/420 project/j_youth.dta')
+```
+
+TREATMENT i.e. frequency of technology / social media usage:
+
+```{r}
+cat('Treatment option: \nHow many hours do you spend chatting or interacting with friends
+    + through social web-sites on a normal school day? 
+    + (1 None; 2 Less than an hour; 3 1-3 hours; 4 4-6 hours; 5 7 or more hours)')
+table(df1_raw$j_ypnetcht)
+round(prop.table(table(df1_raw$j_ypnetcht[df1_raw$j_ypnetcht > 0])), 2)
+```
+
+
+6 possible options for OUTCOME indicating child's mental health state. For each of the 6 questions, the response section shows 7 different emoticon faces where ‘1’ is most happy with big smile, and ‘7’ is most unhappy with big frown.
+
+```{r}
+cat("Outcome option 1: \nHow do you feel about your SCHOOL WORK?")
+table(df1_raw$j_yphsw)
+round(prop.table(table(df1_raw$j_yphsw[df1_raw$j_yphsw > 0])), 2)
+
+cat("\n")
+cat("Outcome option 2: \nHow do you feel about your APPEARANCE?")
+table(df1_raw$j_yphap)
+round(prop.table(table(df1_raw$j_yphap[df1_raw$j_yphap > 0])), 2)
+
+cat("\n")
+cat("Outcome option 3: \nHow do you feel about your FAMILY?")
+table(df1_raw$j_yphfm)
+round(prop.table(table(df1_raw$j_yphfm[df1_raw$j_yphfm > 0])), 2)
+
+cat("\n")
+cat("Outcome option 4: \nHow do you feel about your FRIENDS?")
+table(df1_raw$j_yphfr)
+round(prop.table(table(df1_raw$j_yphfr[df1_raw$j_yphfr > 0])), 2)
+
+cat("\n")
+cat("Outcome option 5: \nHow do you feel about the SCHOOL YOU GO TO?")
+table(df1_raw$j_yphsc)
+round(prop.table(table(df1_raw$j_yphsc[df1_raw$j_yphsc > 0])), 2)
+
+cat("\n")
+cat("Outcome option 6: \nWhich best describes how you feel about your LIFE AS A WHOLE?")
+table(df1_raw$j_yphlf)
+round(prop.table(table(df1_raw$j_yphlf[df1_raw$j_yphlf > 0])), 2)
+```
+
+Distributions of 6 mental health indicators:
+
+```{r}
+## Pick 1 of 6 to review distribution
+# df1_raw$happyind <- df1_raw$j_yphsw  ### school work
+# df1_raw$happyind <- df1_raw$j_yphap  ### appearance
+# df1_raw$happyind <- df1_raw$j_yphfm  ### family
+# df1_raw$happyind <- df1_raw$j_yphfr  ### friends
+df1_raw$happyind <- df1_raw$j_yphsc  ### school you go to
+# df1_raw$happyind <- df1_raw$j_yphlf  ### life as a whole
+
+library(ggplot2)
+hist_happy <- ggplot(df1_raw, aes(x=happyind)) +
+  geom_histogram(binwidth=1, color="black", fill="white")
+
+hist_happy +
+  geom_vline(aes(xintercept = mean(happyind)),
+             color = "blue", linetype = "dashed", size = 1) +
+  labs(title="Which best describes how you feel about the school you go to?")
+
+mean(df1_raw$happyind)
+sd(df1_raw$happyind)
+sd(df1_raw$happyind) / sqrt(length(df1_raw$happyind))
+
+```
+
+Possible confounders: age, gender, and socioeconomic status. I've assumed as proxy for the child's family socioeconomic status, the parents' years of education (higher of either) and household income, which were available from the survey responses.
+
+
+===================================================
+\section*{EXTRACT, TRANSFORM, CLEAN DATA}
+
+
+```{r}
+### Select the variables we want to analyze
+myvars = c("j_hidp", "j_ypnetcht",
+           "j_yphsw", "j_yphap", "j_yphfm", "j_yphfr", "j_yphsc", "j_yphlf",
+           "j_ypdoby", "j_ypsex")
+
+df1 = as.data.frame(df1_raw[myvars])
+
+colnames(df1) <- c("j_hidp", "j_ypnetcht",
+                   "hap_schoolwork", "hap_appearance", "hap_family", 
+                   "hap_friends", "hap_schooloverall", "hap_lifeoverall",
+                   "birthyear", "gender"
+                   )
+
+### Create age from date of birth
+df1$age <- NA
+df1$age <- 2018 - df1$birthyear
+df1$age[df1$age == 9] <- 10
+df1$age[df1$age == 16] <- 15
+table(df1$birthyear)
+table(df1$age)
+
+### RE-CODE (re-grouping) levels of j_ypnetcht treatment variable
+### Set control group as those who average < 1 hour of net chat per school day
+df1$netchat <- NA
+df1$netchat[df1$j_ypnetcht == 1 | df1$j_ypnetcht == 2] <- 0  
+
+### For treatment, toggle between those who average 1-3 hours and 4+ hours
+# df1$netchat[df1$j_ypnetcht == 3] <- 1                         ### 1-3 hours ###
+df1$netchat[df1$j_ypnetcht == 4 | df1$j_ypnetcht == 5] <- 1   ### 4+ hours ###
+
+### Review netchat treatment and control group sizes
+table(df1$j_ypnetcht)
+table(df1$netchat)
+
+### Drop the data points not within treatment or control groups
+df1 <- na.omit(df1)
+summary(df1)
+```
+
+Get monthly income from adult questionnaire data set:
+
+```{r}
+### Load individual adult questionnaire responses on monthly income
+dfincome_raw <-
+  read_dta('/Users/graceyang/Google Drive/_UCLA 420 causal/420 project/j_income.dta')
+
+### Select latest monthly income for each adult
+dfincome_raw <- dfincome_raw[c("j_hidp", "j_frmnthimp_dv")]
+
+### Get total monthly income for each household
+dfincome_raw$income <- round(dfincome_raw$j_frmnthimp_dv * 1, 0)
+library(tidyverse)
+dfincome <-
+  dfincome_raw %>% 
+  group_by(j_hidp) %>% summarise(incomeHH = sum(income))
+
+summary(dfincome)
+
+```
+
+Get highest educational qualifications from adult questionnaire data set:
+
+```{r}
+# ### Load individual adult questionnaire responses on education level
+# dfeduc_raw <-
+#   read_dta('/Users/graceyang/Google Drive/_UCLA 420 causal/420 project/j_indresp.dta')
+# 
+# ### Select educational qualifications each adult attained
+# dfeduc_raw <- dfeduc_raw[c("j_hidp", "j_qfhigh_dv")]
+# 
+# ### Save into separate file
+# write.csv(dfeduc_raw, '/Users/graceyang/Google Drive/_UCLA 420 causal/420 project/dfeduc_raw.csv')
+# rm(dfeduc_raw)
+
+
+### Load separate file with educational qualifications data on adults
+dfeduc_raw <-
+  read.csv('/Users/graceyang/Google Drive/_UCLA 420 causal/420 project/dfeduc_raw.csv')
+
+### Select highest educational qualifications in each household attained
+table(dfeduc_raw$j_qfhigh_dv)
+dfeduc_raw$educ <- dfeduc_raw$j_qfhigh_dv
+dfeduc_raw$educ[dfeduc_raw$educ < 1] <- 999
+dfeduc_raw$educ[dfeduc_raw$educ == 96] <- 999
+table(dfeduc_raw$educ)
+library(tidyverse)
+dfeduc <-
+  dfeduc_raw %>% group_by(j_hidp) %>% summarise(educHH_cat = min(educ))
+table(dfeduc$educHH_cat)
+
+### Map into number of years of education (highest in each household)
+dfeduc$educHH <- 6
+dfeduc$educHH[dfeduc$educHH_cat <= 14] <- 10
+dfeduc$educHH[dfeduc$educHH_cat <= 9] <- 12
+dfeduc$educHH[dfeduc$educHH_cat <= 5] <- 14
+dfeduc$educHH[dfeduc$educHH_cat == 2] <- 15
+dfeduc$educHH[dfeduc$educHH_cat == 1] <- 17
+
+### Review education data after grouping
+table(dfeduc$educHH)
+round(prop.table(table(dfeduc$educHH)), 2)
+```
+
+Number of households in different surveys and number of kids:
+
+```{r}
+### count of unique households
+NROW(unique(df1_raw$j_hidp))   ### from youth survey
+NROW(unique(dfeduc_raw$j_hidp))   ### from adult survey
+NROW(unique(dfincome_raw$j_hidp))   ### from household income survey
+
+### count of children in youth survey
+NROW(unique(df1_raw$pidp))
+```
+
+
+Join household monthly income and highest educational level to youth main data set:
+
+```{r}
+df1 <- merge(x = df1, y = dfincome, by = "j_hidp", all.x = TRUE)
+df1 <- merge(x = df1, y = dfeduc, by = "j_hidp", all.x = TRUE)
+```
+
+
+Drop the data points with NA:
+
+```{r}
+df1$educHH_cat <- NULL
+df1 <- na.omit(df1)
+summary(df1)
+```
+
+Average score on 1-7 scale for each of 6 questions for CONTROL group:
+
+```{r}
+
+mean(df1$hap_schoolwork[df1$netchat == 0])
+mean(df1$hap_appearance[df1$netchat == 0])
+mean(df1$hap_family[df1$netchat == 0])
+mean(df1$hap_friends[df1$netchat == 0])
+mean(df1$hap_schooloverall[df1$netchat == 0])
+mean(df1$hap_lifeoverall[df1$netchat == 0])
+
+```
+
+
+===================================================
+\section*{EXPLORATORY MODELS}
+
+
+Do a quick naive, bivariate estimated ATE using regression:
+
+```{r}
+library(sandwich)
+library(lmtest)
+library(estimatr)
+
+### Pick 1 of 6 to estimate ATE
+# df1$happyind <- df1$hap_schoolwork      ### school work 0.59
+# df1$happyind <- df1$hap_appearance      ### appearance 0.57
+# df1$happyind <- df1$hap_family          ### family 0.37
+# df1$happyind <- df1$hap_friends         ### friends 0.17
+df1$happyind <- df1$hap_schooloverall   ### school you go to 0.88
+# df1$happyind <- df1$hap_lifeoverall     ### life as a whole 0.69
+
+lm_ate_obs = lm_robust(happyind ~ netchat, data = df1)
+
+knitr::kable(t(summary(lm_ate_obs)$coefficients[2, c(1, 2, 4, 5)]), digits = 2)
+```
+
+
+Let's see how similar / different the hours of social media chatting (treatment) are, based on each of the covariates.
+
+```{r}
+print("Treatment vs gender")
+print("Higher % of girls (gender = 2) self-reported spending 4+ hours")
+table(df1$gender, df1$netchat)
+round(prop.table(table(df1$gender, df1$netchat), margin = 1), 2)
+
+cat("\n")
+print("Treatment vs age")
+print("Higher % of kids self-reported spending 4+ hours as they got older")
+table(df1$age, df1$netchat)
+round(prop.table(table(df1$age, df1$netchat), margin = 1), 2)
+
+cat("\n")
+print("Treatment vs years of parents' education")
+print("No clear trend in % of kids spending 4+ hours as their parents got more years of educ")
+table(df1$educHH, df1$netchat)
+round(prop.table(table(df1$educHH, df1$netchat), margin = 1), 2)
+
+cat("\n")
+print("Treatment vs years of parents' education (check with regression)")
+print("Negligible trend in % of kids spending 4+ hours as their parents' got more years of education")
+lm_educHH <- lm_robust(netchat ~ educHH, data = df1)
+summary(lm_educHH)
+
+cat("\n")
+print("Treatment vs household income")
+print("No stat significant trend in % of kids spending 4+ hours as household income got higher")
+lm_incomeHH <- lm_robust(netchat ~ incomeHH, data = df1)
+summary(lm_incomeHH)
+
+```
+
+Let's estimate partial regression coeffs for the 4 covariates. The covariates show stat significant differences for gender (+0.1308 for girls), age (+0.08244 per year), and parents' years of education (-0.008979 per year of education i.e. -0.135 if the parents had bachelor's degree i.e. 15 years of education). These coeffs are expressed as the increase or decrease in % of kids responding that they spent an average of 4+ hours on a normal school day chatting with friends on social media.
+
+```{r}
+print("Treatment vs 4 covariates")
+lm_cov <- lm_robust(netchat ~ gender + age + educHH + incomeHH, data = df1)
+summary(lm_cov)
+```
+
+Let's check the covariate balance in this data set.
+
+```{r}
+library(Matching)
+library(ebal)
+library(foreign)
+library(MASS)
+
+balance_formula = netchat ~ age + gender + educHH + incomeHH
+
+match_check_obj = MatchBalance(balance_formula,
+                               print.level = 0,
+                               data = df1)
+
+baltest_obs = baltest.collect(match_check_obj,
+                              var.names = all.vars(balance_formula)[-1],
+                              after = FALSE)[, c("mean.Tr", "mean.Co",
+                                                 "T pval", "KS pval")]
+
+knitr::kable(baltest_obs, digits = 2)
+```
+
+The balance is bad for 3 out of 4 covariates; household income is the only one that's balanced for treatment. There's no reason to believe a causal claim made on this data as-is. 
+
+
+===================================================
+\section*{FINAL MODEL: MATCHED COVARIATES}
+
+Let's rebalance on gender, age, and parents' years of education since these 3 covariates appeared to differ for treatment. Household income didn't show impact on treatment, and I've dropped this covariate from the balancing requirement. 
+
+```{r}
+library(Matching)
+library(ebal)
+library(foreign)
+library(MASS)
+
+# balance on 3 covariates: gender, age, parents' years of education
+balance_formula = netchat ~ gender + age + educHH
+
+# Extract variable names
+variable_names = all.vars(balance_formula)[-1]
+
+### Exact matches for gender and age; closest for parents' years of education
+exact_matches = c(TRUE, TRUE, FALSE)
+
+# Do the matching
+matched_obj =
+  Match(
+    Y = df1$happyind,
+    Tr = df1$netchat,
+    X = df1[, variable_names],
+    M = 1,
+    exact = exact_matches,
+    BiasAdjust = TRUE,
+    estimand = "ATT"
+  )
+
+# ATT estimate, standard error of estimate, and t-statistic
+matched_obj$est
+matched_obj$se
+result_matched <- round(c(matched_obj$est, matched_obj$se, matched_obj$est / matched_obj$se), 2)
+```
+
+
+And the updated balance table:
+
+```{r}
+match_balance = MatchBalance(
+  balance_formula,
+  match.out = matched_obj,
+  data = df1,
+  print.level = 0
+)
+
+balance_table_updated = baltest.collect(match_balance,
+                                        var.names = variable_names,
+                                        after = TRUE)[, c("mean.Tr", "mean.Co", "T pval", "KS pval")]
+
+knitr::kable(balance_table_updated, digits = 3)
+```
+
+
+
+===================================================
+\section*{FINAL MODEL: CONTROLLING COVARIATES}
+
+
+Let's fit a naive, bivariate regression model and compare it with a second model that has more controls:
+
+```{r}
+### Model 1 (bivariate on treatment of netchat hours spent)
+model1 <- lm(happyind ~ netchat, data = df1, na.action = na.omit)
+
+### Model 2 (add controlling for 3 covariates)
+model2 <- lm(happyind ~ netchat + gender + age + educHH,
+             data = df1,
+             na.action = na.omit)
+
+### Create a table
+### ovb_minimal_reporting() didn't knit well for me
+library(sensemakr)
+table_res <-
+  as.data.frame(sensitivity_stats(model1, treatment = "netchat")[c(1:7, 9)],
+                col.names = names(x))
+
+table_res[2,] <-
+  sensitivity_stats(model2, treatment = "netchat")[c(1:7, 9)]
+
+### Format table
+library(formattable)
+table_res[, c(2, 3, 4)] <- round(table_res[, c(2, 3, 4)], 2)
+table_res[, 5] <- percent(table_res[, 5])
+table_res[, 6] <- percent(table_res[, 6])
+table_res[, 7] <- percent(table_res[, 7])
+table_res[, 1] <- c("model 1: Naive bivariate", "model 2: Control for covariates")
+names(table_res)[1:8] <-
+  c("Treatment", "Est.", "SE", "t-stat", "R-sq(Y~D/X)", "RV", "RV(alpha=0.05)", "df")
+
+### Print table
+table_res
+
+```
+
+The above table shows that:
+
+- Model 1 (simple bivariate model) estimates that there’s an average increase of 0.88 units in unhappiness scale in the treatment group i.e. children doing 4 or more hours of netchats on an normal school day.
+
+- Model 2 estimates a smaller increase of 0.71 units after accounting for possibly confounding factors like child's age, gender, and parents' educational level (highest attained).
+
+- The estimated ATE seems to be most affected by the amount of hours spent on net chats. When we added in covariates in model 2, the estimated ATE seems to become more “diluted” going from 0.88 model 1 to 0.71 model 2.
+
+- The estimated effect for model 1 appears more robust than model 2 for unobserved confounding: the robustness value (RV) tells us that if there was a confounder that explains 21.2% of the residual variance in netchat frequency and happiness/unhappiness scale, that will be sufficient to erase the model 1 estimated effect completely. The RV is lower for model 2, where it'll take an unobserved confounder being able to explain 16.6% of residual variance to eliminate the estimated effect to nothing. 
+
+- The RV_alpha=0.05 tells us that the confounding needs to have strength of 16.5% of model 1 residual variance to reduce the estimated effect to the boundary of statistical significance at $\alpha$ = 0.05 level. Model 2 has a much lower strength hurdle at 11.5%, which makes it slightly easier to think up some small confounders that can eliminate any estimated effect on the child's self-rated number on the happiness/unhappiness scale. Model 2 is LESS robust to potential unobserved confounding.
+
+- The value of R2YDX can represent an “extreme scenario” analysis: if an unobserved confounder explains 100% of the remaining outcome variation, such a confounder would need to explain only 3-5% of the residual variation in the violence treatment in order to reduce the estimated effect to zero for models 1 and 2.
+
+
+===================================================
+\section*{SENSITIVITY ANALYSIS: CONTOUR PLOTS}
+
+
+How robust is the regression results to unobserved confounding factors? Would any unobserved and unnamed confounders likely exist? Let's do some sensitivity analysis on the model. Using gender as benchmark:
+
+```{r}
+### Sensitivity analysis - Model 2, for effect of netchat hours spent.
+library(sensemakr)
+sense.model2 <- sensemakr(model2,
+                          treatment = "netchat",
+                          benchmark = "gender", 
+                          kd = 1:3)
+
+### Create contour plot showing sensitivity of point estimate 
+### to hypothesized confounder: gender, age, parents' educ level
+ovb_contour_plot(
+  sense.model2, lim = 0.5, lim.y = 0.5,
+  xlab = "Hypothetical partial R-sq of unobserved confounders with treatment",
+  ylab = "Hypothetical partial R-sq of unobserved confounders with outcome",
+)
+
+```
+
+Using age as benchmark:
+
+```{r}
+### Sensitivity analysis - Model 2, for effect of netchat hours spent.
+library(sensemakr)
+sense.model2 <- sensemakr(model2,
+                          treatment = "netchat",
+                          benchmark = "age", 
+                          kd = 1:3)
+
+### Create contour plot showing sensitivity of point estimate 
+### to hypothesized confounder: gender, age, parents' educ level
+ovb_contour_plot(
+  sense.model2, lim = 0.5, lim.y = 0.5,
+  xlab = "Hypothetical partial R-sq of unobserved confounders with treatment",
+  ylab = "Hypothetical partial R-sq of unobserved confounders with outcome",
+)
+
+```
+
+
+
+```{r}
+ovb_minimal_reporting(sense.model2, format = "latex")
+### this table didn't knit well for me 
+```
+
+```{r}
+plot(sense.model2, type = "extreme")
+```
+
+```{r}
+
+```
+
