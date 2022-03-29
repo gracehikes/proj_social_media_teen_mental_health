@@ -7,7 +7,7 @@ What measurable effects are there on young people’s mental health when they ha
 
 
 # Methodology
-I’ve analyzed select questions and responses from an observational data set in the United Kingdom called “Understanding Society”. It’s the largest longitudinal study of its kind, surveying nearly 20,000 U.K. households in the latest survey year 2019 and provides important information for researchers and policymakers on the changes and stability of people’s lives in the U.K. These surveys were initiated in 1991 and have been conducted annually since.
+I’ve analyzed select questions and responses from an observational data set in the United Kingdom called “[Understanding Society](https://www.understandingsociety.ac.uk/)”. It’s the largest longitudinal study of its kind, surveying nearly 20,000 U.K. households in the latest survey year 2019 and provides important information for researchers and policymakers on the changes and stability of people’s lives in the U.K. These surveys were initiated in 1991 and have been conducted annually since.
 
 There’s a youth self-completed questionnaire sub-section from the main “Understanding Society” data set, for which kids aged 10 to 15 years old from some of the 20,000 households in the study were asked to respond. It included questions on the child’s time spent on social media, computer- and other screen-time (game consoles, computer games, TV), family support, feelings about different areas of life, health behavior like smoking and drinking, aspirations about their future, etc.
 
@@ -35,6 +35,4 @@ When we reviewed the responses from “power users” of social media i.e. the y
 
 
 # More Details
-Full report found [here](https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/_project-report---youth-and-social-media---grace-yang.pdf).
-
 Full report found [here](/_project-report---youth-and-social-media---grace-yang.pdf).
