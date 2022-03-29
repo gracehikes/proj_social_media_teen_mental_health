@@ -14,7 +14,7 @@ There’s a youth self-completed questionnaire sub-section from the main “Unde
 The latest available questionnaire responses were released in 2019. This captured responses to almost 200 questions from 1,800 young people in the U.K. I’ve selected the following questions from this 2019 youth data set as the basis of my analysis:
 
 <p align="center">
-  <img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%207%20emoticons.png" width=110% height=110%>
+  <img src="https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/images/project%20report%207%20emoticons.png" width=90% height=90%>
 </p>
 
 The regression model is shown below. Y denotes the mental well-being response score, α denotes how the expected well-being response score changes when spending either 1-3 hours, or 4+ hours on social media per school day when compared to the control group who engages on social media for less and an hour each school day. I’ve also included the child’s age, child’s gender, and parents’ educational qualifications in the regression model as observed confounding controls.
