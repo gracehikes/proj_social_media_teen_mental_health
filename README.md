@@ -34,3 +34,7 @@ When we reviewed the responses from “power users” of social media i.e. the y
 </p>
 
 
+# More Details
+Full report found [here](https://github.com/gracehikes/proj_social_media_teen_mental_health/blob/main/_project-report---youth-and-social-media---grace-yang.pdf).
+
+Full report found [here](/_project-report---youth-and-social-media---grace-yang.pdf).
